@@ -59,4 +59,4 @@ chmod +x cohere2openai
 ```
 
 ## License
-[MIT](https://github.com/missuo/cohere2openai/blob/main/LICENSE)
+[GPL 3.0](https://github.com/missuo/cohere2openai/blob/main/LICENSE)
