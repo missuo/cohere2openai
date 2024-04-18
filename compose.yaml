@@ -1,0 +1,6 @@
+services:
+  cohere2openai:
+    image: ghcr.io/missuo/cohere2openai:latest
+    restart: always
+    ports:
+      - "6600:6600"

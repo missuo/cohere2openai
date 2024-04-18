@@ -2,13 +2,14 @@
  * @Author: Vincent Yang
  * @Date: 2024-04-16 22:58:27
  * @LastEditors: Vincent Yang
- * @LastEditTime: 2024-04-18 03:49:43
+ * @LastEditTime: 2024-04-18 04:34:55
  * @FilePath: /cohere2openai/types.go
  * @Telegram: https://t.me/missuo
  * @GitHub: https://github.com/missuo
  *
  * Copyright © 2024 by Vincent, All Rights Reserved.
  */
+
 package main
 
 type OpenAIRequest struct {
