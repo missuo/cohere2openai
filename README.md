@@ -2,13 +2,15 @@
 Used to convert the Cohere API to OpenAI compatible API. **Easily use Cohere with any OpenAI compatible client.**
 
 ## Compatibility
-Currently it is only compatible with the Cohere family of models, if you pass in any other model, the default will be to use **Command R+**.
+Currently it is only compatible with the Cohere family of models, if you pass in any other model, the default will be to use **Command R+**. 
+
+**Does not support non-streaming output**
 
 ## Request Example
 ```bash
 curl http://127.0.0.1:6600/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer sk-ant-xxxxxxxxxxxxxxxx" \
+  -H "Authorization: Bearer xxxxxxx" \
   -d '{
     "model": "command-r-plus",
     "messages": [
