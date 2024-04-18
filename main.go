@@ -2,7 +2,7 @@
  * @Author: Vincent Yang
  * @Date: 2024-04-16 22:58:22
  * @LastEditors: Vincent Yang
- * @LastEditTime: 2024-04-18 04:20:41
+ * @LastEditTime: 2024-04-18 04:33:58
  * @FilePath: /cohere2openai/main.go
  * @Telegram: https://t.me/missuo
  * @GitHub: https://github.com/missuo
@@ -176,7 +176,7 @@ func handler(c *gin.Context) {
 		return
 	}
 
-	allowModels := []string{"command-r-plus", "command-r"}
+	allowModels := []string{"command-r-plus", "command-r", "command", "command-light", "command-light-nightly", "command-nightly"}
 
 	if !isInSlice(openAIReq.Model, allowModels) {
 		openAIReq.Model = "command-r-plus"
@@ -200,6 +200,50 @@ func main() {
 		})
 	})
 	r.POST("/v1/chat/completions", handler)
+	r.GET("/v1/models", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"object": "list",
+			"data": []gin.H{
+				{
+					"id":       "command-r",
+					"object":   "model",
+					"created":  1692901427,
+					"owned_by": "system",
+				},
+				{
+					"id":       "command-r-plus",
+					"object":   "model",
+					"created":  1692901427,
+					"owned_by": "system",
+				},
+				{
+					"id":       "command-light",
+					"object":   "model",
+					"created":  1692901427,
+					"owned_by": "system",
+				},
+				{
+					"id":       "command-light-nightly",
+					"object":   "model",
+					"created":  1692901427,
+					"owned_by": "system",
+				},
+				{
+					"id":       "command",
+					"object":   "model",
+					"created":  1692901427,
+					"owned_by": "system",
+				},
+				{
+					"id":       "command-nightly",
+					"object":   "model",
+					"created":  1692901427,
+					"owned_by": "system",
+				},
+			},
+		})
+	})
+
 	r.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{
 			"code":    http.StatusNotFound,
