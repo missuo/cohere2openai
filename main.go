@@ -68,7 +68,6 @@ func cohereRequest(c *gin.Context, openAIReq OpenAIRequest) {
 	}
 
 	reqBody, _ := json.Marshal(cohereReq)
-	fmt.Println(string(reqBody))
 	req, err := http.NewRequest("POST", "https://api.cohere.ai/v1/chat", bytes.NewBuffer(reqBody))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
