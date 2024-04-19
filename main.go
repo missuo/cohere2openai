@@ -2,7 +2,7 @@
  * @Author: Vincent Yang
  * @Date: 2024-04-16 22:58:22
  * @LastEditors: Vincent Yang
- * @LastEditTime: 2024-04-19 19:43:09
+ * @LastEditTime: 2024-04-19 19:50:11
  * @FilePath: /cohere2openai/main.go
  * @Telegram: https://t.me/missuo
  * @GitHub: https://github.com/missuo
@@ -86,12 +86,12 @@ func cohereRequest(c *gin.Context, openAIReq OpenAIRequest) {
 	}
 	defer resp.Body.Close()
 
-	c.Header("Content-Type", "application/json")
+	c.Header("Content-Type", "text/event-stream")
 	c.Header("Cache-Control", "no-cache")
 	c.Header("Connection", "keep-alive")
 
 	reader := resp.Body
-	buffer := make([]byte, 102400)
+	buffer := make([]byte, 1048576)
 
 	isFirstChunk := true
 
@@ -227,7 +227,7 @@ func cohereNonStreamRequest(c *gin.Context, openAIReq OpenAIRequest) {
 	c.Header("Cache-Control", "no-cache")
 	c.Header("Connection", "keep-alive")
 	reader := resp.Body
-	buffer := make([]byte, 1024)
+	buffer := make([]byte, 1048576)
 	n, _ := reader.Read(buffer)
 	var cohereResp CohereResponse
 	err = json.Unmarshal(buffer[:n], &cohereResp)
