@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -168,6 +169,93 @@ func cohereRequest(c *gin.Context, openAIReq OpenAIRequest) {
 	}
 }
 
+func cohereNonStreamRequest(c *gin.Context, openAIReq OpenAIRequest) {
+	apiKey, err := parseAuthorizationHeader(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	cohereReq := CohereRequest{
+		Model:       openAIReq.Model,
+		ChatHistory: []ChatMessage{},
+		Message:     "",
+		Stream:      openAIReq.Stream,
+	}
+
+	for _, msg := range openAIReq.Messages {
+		if msg.Role == "user" {
+			cohereReq.Message = msg.Content
+		} else {
+			var role string
+			if msg.Role == "assistant" {
+				role = "CHATBOT"
+			} else if msg.Role == "system" {
+				role = "SYSTEM"
+			} else {
+				role = "USER"
+			}
+			cohereReq.ChatHistory = append(cohereReq.ChatHistory, ChatMessage{
+				Role:    role,
+				Message: msg.Content,
+			})
+		}
+	}
+
+	reqBody, _ := json.Marshal(cohereReq)
+	req, err := http.NewRequest("POST", "https://api.cohere.ai/v1/chat", bytes.NewBuffer(reqBody))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", apiKey))
+
+	//client := &http.Client{}
+// 	proxy := "http://192.168.50.2:7890/"
+// 	proxyAddress, _ := url.Parse(proxy)
+	client := &http.Client{
+// 		Transport: &http.Transport{
+// 			Proxy: http.ProxyURL(proxyAddress),
+// 		},
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer resp.Body.Close()
+
+	c.Header("Content-Type", "application/json")
+	c.Header("Cache-Control", "no-cache")
+	c.Header("Connection", "keep-alive")
+	reader := resp.Body
+	buffer := make([]byte, 1024)
+	n, err := reader.Read(buffer)
+	var cohereResp CohereResponse
+	err = json.Unmarshal(buffer[:n], &cohereResp)
+  if err != nil {
+    c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+    return
+  }
+	// 将解码后的数据作为响应返回
+	var aiResp OpenAINonStreamResponse
+	aiResp.ID = "chatcmpl-123"
+	aiResp.Object = "chat.completion"
+	aiResp.Created = time.Now().Unix()
+	aiResp.Model = openAIReq.Model
+	aiResp.Choices = []OpenAINonStreamChoice{
+		{
+			Index:        0,
+			Message:      OpenAIDelta{Content: cohereResp.Text, Role: "assistant"},
+			FinishReason: stringPtr("stop"),
+		},
+	}
+
+	c.JSON(http.StatusOK, aiResp)
+}
+
 func handler(c *gin.Context) {
 	var openAIReq OpenAIRequest
 
@@ -184,9 +272,7 @@ func handler(c *gin.Context) {
 	if openAIReq.Stream {
 		cohereRequest(c, openAIReq)
 	} else {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Stream is not enabled",
-		})
+		cohereNonStreamRequest(c, openAIReq)
 	}
 }
 
