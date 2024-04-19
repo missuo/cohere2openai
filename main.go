@@ -2,7 +2,7 @@
  * @Author: Vincent Yang
  * @Date: 2024-04-16 22:58:22
  * @LastEditors: Vincent Yang
- * @LastEditTime: 2024-04-18 04:33:58
+ * @LastEditTime: 2024-04-18 20:13:27
  * @FilePath: /cohere2openai/main.go
  * @Telegram: https://t.me/missuo
  * @GitHub: https://github.com/missuo
@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"strings"
 	"time"
 
@@ -212,14 +211,7 @@ func cohereNonStreamRequest(c *gin.Context, openAIReq OpenAIRequest) {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", apiKey))
 
-	//client := &http.Client{}
-// 	proxy := "http://192.168.50.2:7890/"
-// 	proxyAddress, _ := url.Parse(proxy)
-	client := &http.Client{
-// 		Transport: &http.Transport{
-// 			Proxy: http.ProxyURL(proxyAddress),
-// 		},
-	}
+	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -232,14 +224,14 @@ func cohereNonStreamRequest(c *gin.Context, openAIReq OpenAIRequest) {
 	c.Header("Connection", "keep-alive")
 	reader := resp.Body
 	buffer := make([]byte, 1024)
-	n, err := reader.Read(buffer)
+	n, _ := reader.Read(buffer)
 	var cohereResp CohereResponse
 	err = json.Unmarshal(buffer[:n], &cohereResp)
-  if err != nil {
-    c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-    return
-  }
-	// 将解码后的数据作为响应返回
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
 	var aiResp OpenAINonStreamResponse
 	aiResp.ID = "chatcmpl-123"
 	aiResp.Object = "chat.completion"
