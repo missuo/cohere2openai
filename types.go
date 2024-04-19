@@ -1,8 +1,8 @@
 /*
  * @Author: Vincent Yang
  * @Date: 2024-04-16 22:58:27
- * @LastEditors: Vincent Young
- * @LastEditTime: 2024-04-19 03:34:12
+ * @LastEditors: Vincent Yang
+ * @LastEditTime: 2024-04-19 19:42:31
  * @FilePath: /cohere2openai/types.go
  * @Telegram: https://t.me/missuo
  * @GitHub: https://github.com/missuo
@@ -36,9 +36,10 @@ type ChatMessage struct {
 }
 
 type CohereResponse struct {
-	IsFinished bool   `json:"is_finished"`
-	EventType  string `json:"event_type"`
-	Text       string `json:"text"`
+	IsFinished   bool   `json:"is_finished"`
+	EventType    string `json:"event_type"`
+	Text         string `json:"text,omitempty"`
+	FinishReason string `json:"finish_reason,omitempty"`
 }
 
 type OpenAIResponse struct {
