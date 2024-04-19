@@ -4,8 +4,6 @@ Used to convert the Cohere API to OpenAI compatible API. **Easily use Cohere wit
 ## Compatibility
 Currently it is only compatible with the Cohere family of models, if you pass in any other model, the default will be to use **Command R+**. 
 
-**Non-streaming is not supported at the moment. Please wait for updates.**
-
 ## Request Example
 ```bash
 curl http://127.0.0.1:6600/v1/chat/completions \
