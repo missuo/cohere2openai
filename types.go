@@ -1,8 +1,8 @@
 /*
  * @Author: Vincent Yang
  * @Date: 2024-04-16 22:58:27
- * @LastEditors: Vincent Yang
- * @LastEditTime: 2024-04-18 04:34:55
+ * @LastEditors: Vincent Young
+ * @LastEditTime: 2024-04-19 03:34:12
  * @FilePath: /cohere2openai/types.go
  * @Telegram: https://t.me/missuo
  * @GitHub: https://github.com/missuo
@@ -18,7 +18,8 @@ type OpenAIRequest struct {
 		Role    string `json:"role"`
 		Content string `json:"content"`
 	} `json:"messages"`
-	Stream bool `json:"stream"`
+	Stream    bool  `json:"stream"`
+	MaxTokens int64 `json:"max_tokens"`
 }
 
 type CohereRequest struct {
@@ -26,6 +27,7 @@ type CohereRequest struct {
 	ChatHistory []ChatMessage `json:"chat_history"`
 	Message     string        `json:"message"`
 	Stream      bool          `json:"stream"`
+	MaxTokens   int64         `json:"max_tokens"`
 }
 
 type ChatMessage struct {

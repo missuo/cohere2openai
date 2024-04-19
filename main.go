@@ -1,8 +1,8 @@
 /*
  * @Author: Vincent Yang
  * @Date: 2024-04-16 22:58:22
- * @LastEditors: Vincent Yang
- * @LastEditTime: 2024-04-18 20:13:27
+ * @LastEditors: Vincent Young
+ * @LastEditTime: 2024-04-19 03:45:05
  * @FilePath: /cohere2openai/main.go
  * @Telegram: https://t.me/missuo
  * @GitHub: https://github.com/missuo
@@ -45,6 +45,7 @@ func cohereRequest(c *gin.Context, openAIReq OpenAIRequest) {
 		ChatHistory: []ChatMessage{},
 		Message:     "",
 		Stream:      openAIReq.Stream,
+		MaxTokens:   openAIReq.MaxTokens,
 	}
 
 	for _, msg := range openAIReq.Messages {
@@ -67,6 +68,7 @@ func cohereRequest(c *gin.Context, openAIReq OpenAIRequest) {
 	}
 
 	reqBody, _ := json.Marshal(cohereReq)
+	fmt.Println(string(reqBody))
 	req, err := http.NewRequest("POST", "https://api.cohere.ai/v1/chat", bytes.NewBuffer(reqBody))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -180,6 +182,7 @@ func cohereNonStreamRequest(c *gin.Context, openAIReq OpenAIRequest) {
 		ChatHistory: []ChatMessage{},
 		Message:     "",
 		Stream:      openAIReq.Stream,
+		MaxTokens:   openAIReq.MaxTokens,
 	}
 
 	for _, msg := range openAIReq.Messages {
@@ -261,6 +264,25 @@ func handler(c *gin.Context) {
 	if !isInSlice(openAIReq.Model, allowModels) {
 		openAIReq.Model = "command-r-plus"
 	}
+
+	// Set max tokens based on model
+	switch openAIReq.Model {
+	case "command-light":
+		openAIReq.MaxTokens = 4000
+	case "command":
+		openAIReq.MaxTokens = 4000
+	case "command-light-nightly":
+		openAIReq.MaxTokens = 4000
+	case "command-nightly":
+		openAIReq.MaxTokens = 4000
+	case "command-r":
+		openAIReq.MaxTokens = 4000
+	case "command-r-plus":
+		openAIReq.MaxTokens = 4000
+	default:
+		openAIReq.MaxTokens = 4096
+	}
+
 	if openAIReq.Stream {
 		cohereRequest(c, openAIReq)
 	} else {
