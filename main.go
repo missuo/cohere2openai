@@ -355,7 +355,7 @@ func main() {
 
 	port, ok := os.LookupEnv("PORT")
 	if !ok {
-		port = "6800"
+		port = "6600"
 	}
 	r.Run(":" + port)
 }
