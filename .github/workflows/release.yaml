@@ -35,11 +35,8 @@ jobs:
         path: cohere2openai-${{ matrix.goos }}-${{ matrix.goarch }}
   
     - name: Upload Artifact to Release
-      uses: actions/upload-release-asset@v1
+      uses: softprops/action-gh-release@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./cohere2openai-${{ matrix.goos }}-${{ matrix.goarch }}
-        asset_name: cohere2openai-${{ matrix.goos }}-${{ matrix.goarch }}
-        asset_content_type: application/octet-stream
+        files: ./cohere2openai-${{ matrix.goos }}-${{ matrix.goarch }}
