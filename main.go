@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -351,5 +352,10 @@ func main() {
 			"message": "Path not found",
 		})
 	})
-	r.Run(":6600")
+
+	port, ok := os.LookupEnv("PORT")
+	if !ok {
+		port = "6800"
+	}
+	r.Run(":" + port)
 }
