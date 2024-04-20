@@ -2,7 +2,7 @@
  * @Author: Vincent Yang
  * @Date: 2024-04-16 22:58:22
  * @LastEditors: Vincent Yang
- * @LastEditTime: 2024-04-19 19:50:11
+ * @LastEditTime: 2024-04-20 06:27:48
  * @FilePath: /cohere2openai/main.go
  * @Telegram: https://t.me/missuo
  * @GitHub: https://github.com/missuo
@@ -15,6 +15,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"net/http"
@@ -293,6 +294,22 @@ func handler(c *gin.Context) {
 }
 
 func main() {
+
+	var port string
+
+	flag.StringVar(&port, "p", "", "Port to run the server on")
+	flag.Parse()
+
+	if port == "" {
+		port = os.Getenv("PORT")
+	}
+
+	if port == "" {
+		port = "6600"
+	}
+
+	fmt.Println("Running on port " + port + "\nHave fun with Cohere2OpenAI!")
+
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	r.Use(cors.Default())
@@ -352,10 +369,6 @@ func main() {
 			"message": "Path not found",
 		})
 	})
-
-	port, ok := os.LookupEnv("PORT")
-	if !ok {
-		port = "6600"
-	}
+  
 	r.Run(":" + port)
 }
