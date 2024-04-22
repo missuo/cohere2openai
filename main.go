@@ -28,6 +28,12 @@ import (
 )
 
 func parseAuthorizationHeader(c *gin.Context) (string, error) {
+	// get api key from env first, if not found, get it from Authorization header
+	apiKey := os.Getenv("KEY")
+	if apiKey != "" {
+		return apiKey, nil
+	}
+
 	authorizationHeader := c.GetHeader("Authorization")
 	if !strings.HasPrefix(authorizationHeader, "Bearer ") {
 		return "", fmt.Errorf("invalid Authorization header format")
@@ -369,6 +375,6 @@ func main() {
 			"message": "Path not found",
 		})
 	})
-  
+
 	r.Run(":" + port)
 }
