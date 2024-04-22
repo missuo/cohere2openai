@@ -301,11 +301,12 @@ func handler(c *gin.Context) {
 
 func main() {
 
-	var port string
+	var port, key string
 
 	flag.StringVar(&port, "p", "", "Port to run the server on")
+	flag.StringVar(&key, "k", "", "API key for Cohere")
 	flag.Parse()
-
+	os.Setenv("KEY", key)
 	if port == "" {
 		port = os.Getenv("PORT")
 	}
