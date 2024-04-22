@@ -28,6 +28,12 @@ import (
 )
 
 func parseAuthorizationHeader(c *gin.Context) (string, error) {
+	// get api key from env first, if not found, get it from Authorization header
+	apiKey := os.Getenv("KEY")
+	if apiKey != "" {
+		return apiKey, nil
+	}
+
 	authorizationHeader := c.GetHeader("Authorization")
 	if !strings.HasPrefix(authorizationHeader, "Bearer ") {
 		return "", fmt.Errorf("invalid Authorization header format")
@@ -295,10 +301,15 @@ func handler(c *gin.Context) {
 
 func main() {
 
-	var port string
+	var port, key string
 
 	flag.StringVar(&port, "p", "", "Port to run the server on")
+	flag.StringVar(&key, "k", "", "API key for Cohere")
 	flag.Parse()
+
+	if key != "" {
+		os.Setenv("KEY", key)
+	}
 
 	if port == "" {
 		port = os.Getenv("PORT")
@@ -369,6 +380,6 @@ func main() {
 			"message": "Path not found",
 		})
 	})
-  
+
 	r.Run(":" + port)
 }
